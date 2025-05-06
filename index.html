@@ -1,0 +1,732 @@
+<html class="scroll-smooth" lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Pengelolaan Penjualan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <a
+            class="text-2xl font-semibold text-yellow-600 flex items-center space-x-2"
+            href="#"
+          >
+            <img
+              alt="Logo Risol, a stylized letter R in yellow and brown colors"
+              class="rounded-full"
+              height="40"
+              src="https://storage.googleapis.com/a1aa/image/2d69a67f-284e-474e-4156-d0a9e3c1f5cc.jpg"
+              width="40"
+            />
+            <span>RisolKu</span>
+          </a>
+          <div
+            class="hidden md:flex space-x-6 text-gray-700 font-medium"
+            id="desktop-menu"
+          >
+            <a class="hover:text-yellow-600 transition" href="#dashboard"
+              >Laporan penjualan</a
+            >
+            <a class="hover:text-yellow-600 transition" href="#produk"
+              >Jenis Produk</a
+            >
+            <a class="hover:text-yellow-600 transition" href="#penjualan"
+              >data Penjualan</a
+            >
+          </div>
+          <div class="md:hidden">
+            <button
+              aria-label="Toggle menu"
+              class="text-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-600"
+              id="menu-btn"
+            >
+              <i class="fas fa-bars fa-lg"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="hidden md:hidden bg-white border-t border-gray-200"
+        id="mobile-menu"
+      >
+        <a
+          class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 transition"
+          href="#dashboard"
+          >Laporan Penjualan</a
+        >
+        <a
+          class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 transition"
+          href="#produk"
+          >Jenis Produk</a
+        >
+        <a
+          class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 transition"
+          href="#penjualan"
+          >Data Penjualan</a
+        >
+      </div>
+    </nav>
+
+    <!-- Modal Overlay -->
+    <div
+      id="modal-overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
+    >
+      <div
+        class="bg-white rounded-lg shadow-lg max-w-md w-full p-6 mx-4 sm:mx-0"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <h3
+          class="text-xl font-semibold text-yellow-700 mb-4 text-center"
+          id="modal-title"
+        >
+          Modal Awal
+        </h3>
+        <form id="modal-form" class="space-y-4">
+          <div>
+            <label
+              for="modal-tanggal"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Tanggal</label
+            >
+            <input
+              type="date"
+              id="modal-tanggal"
+              name="modal-tanggal"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              required
+            />
+          </div>
+          <div>
+            <label
+              for="modal-jumlah"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Jumlah Modal Awal (Rp)</label
+            >
+            <input
+              type="number"
+              id="modal-jumlah"
+              name="modal-jumlah"
+              min="0"
+              step="1000"
+              placeholder="Masukkan jumlah modal awal"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              required
+            />
+          </div>
+          <div class="flex justify-end space-x-3 pt-4">
+            <button
+              type="button"
+              id="modal-cancel"
+              class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 rounded bg-yellow-600 hover:bg-yellow-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            >
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Dashboard Section -->
+      <section class="mb-12" id="dashboard">
+        <h1
+          class="text-3xl font-semibold text-yellow-700 mb-6 text-center md:text-left"
+        >
+          Laporan Penjualan
+        </h1>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 max-w-lg sm:max-w-none mx-auto sm:mx-0"
+        >
+          <div
+            class="bg-white rounded-lg shadow p-5 flex items-center space-x-4"
+            title="Total Produk"
+          >
+            <div
+              class="bg-yellow-100 text-yellow-600 p-3 rounded-full flex-shrink-0"
+            >
+              <i class="fas fa-box fa-2x"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Total Produk</p>
+              <p class="text-xl font-semibold text-gray-900" id="total-produk">
+                0
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg shadow p-5 flex items-center space-x-4"
+            title="Total Penjualan"
+          >
+            <div
+              class="bg-yellow-100 text-yellow-600 p-3 rounded-full flex-shrink-0"
+            >
+              <i class="fas fa-shopping-cart fa-2x"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Total Penjualan</p>
+              <p
+                class="text-xl font-semibold text-gray-900"
+                id="total-penjualan"
+              >
+                0
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg shadow p-5 flex items-center space-x-4"
+            title="Pendapatan"
+          >
+            <div
+              class="bg-yellow-100 text-yellow-600 p-3 rounded-full flex-shrink-0"
+            >
+              <i class="fas fa-coins fa-2x"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Pendapatan</p>
+              <p
+                class="text-xl font-semibold text-gray-900"
+                id="total-pendapatan"
+              >
+                Rp 0
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg shadow p-5 flex items-center space-x-4"
+            title="Jumlah Data Penjualan"
+          >
+            <div
+              class="bg-yellow-100 text-yellow-600 p-3 rounded-full flex-shrink-0"
+            >
+              <i class="fas fa-users fa-2x"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Pelanggan</p>
+              <p
+                class="text-xl font-semibold text-gray-900"
+                id="total-pelanggan"
+              >
+                0
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg shadow p-5 flex items-center space-x-4"
+            title="Modal Awal Hari Ini"
+          >
+            <div
+              class="bg-yellow-100 text-yellow-600 p-3 rounded-full flex-shrink-0"
+            >
+              <i class="fas fa-wallet fa-2x"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Modal Awal</p>
+              <p
+                class="text-xl font-semibold text-gray-900"
+                id="modal-awal-hari"
+              >
+                Rp 0
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Produk Section -->
+      <section class="mb-12" id="produk">
+        <h2
+          class="text-2xl font-semibold text-yellow-700 mb-6 text-center md:text-left"
+        >
+          Jenis Risol
+        </h2>
+        <div class="overflow-x-auto rounded-lg shadow">
+          <table class="min-w-full bg-white divide-y divide-gray-200">
+            <thead class="bg-yellow-100 text-yellow-700">
+              <tr>
+                <th
+                  class="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap"
+                  scope="col"
+                >
+                  #
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap"
+                  scope="col"
+                >
+                  Nama Produk
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap"
+                  scope="col"
+                >
+                  Harga (Rp)
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap"
+                  scope="col"
+                >
+                  Stok
+                </th>
+                <th
+                  class="px-6 py-4 text-center text-sm font-semibold whitespace-nowrap"
+                  scope="col"
+                >
+                  Aksi
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              class="divide-y divide-gray-100 text-gray-700"
+              id="produk-tbody"
+            ></tbody>
+          </table>
+        </div>
+        <div
+          class="flex flex-col sm:flex-row sm:space-x-4 mt-6 justify-center md:justify-start"
+        >
+          <button
+            class="mb-3 sm:mb-0 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-5 py-2 rounded shadow focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            id="btn-tambah-produk"
+          >
+            <i class="fas fa-plus mr-2"></i>Tambah Produk
+          </button>
+          <button
+            class="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded shadow focus:outline-none focus:ring-2 focus:ring-red-500"
+            id="btn-reset-produk"
+          >
+            <i class="fas fa-undo-alt mr-2"></i>Reset Produk
+          </button>
+        </div>
+      </section>
+      <!-- Penjualan Section -->
+      <section class="mb-12" id="penjualan">
+        <h2
+          class="text-2xl font-semibold text-yellow-700 mb-6 text-center md:text-left"
+        >
+          Data Penjualan
+        </h2>
+        <div class="overflow-x-auto rounded-lg shadow">
+          <table class="min-w-full bg-white divide-y divide-gray-200">
+            <thead class="bg-yellow-100 text-yellow-700">
+              <tr>
+                <th
+                  class="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap"
+                  scope="col"
+                >
+                  #
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap"
+                  scope="col"
+                >
+                  Produk
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap"
+                  scope="col"
+                >
+                  Jumlah
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap"
+                  scope="col"
+                >
+                  Tanggal
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              class="divide-y divide-gray-100 text-gray-700"
+              id="penjualan-tbody"
+            ></tbody>
+          </table>
+        </div>
+        <div
+          class="flex flex-col sm:flex-row sm:space-x-4 mt-6 justify-center md:justify-start"
+        >
+          <button
+            class="mb-3 sm:mb-0 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-5 py-2 rounded shadow focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            id="btn-tambah-penjualan"
+          >
+            <i class="fas fa-plus mr-2"></i>Tambah Penjualan
+          </button>
+          <button
+            class="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded shadow focus:outline-none focus:ring-2 focus:ring-red-500"
+            id="btn-reset-penjualan"
+          >
+            <i class="fas fa-undo-alt mr-2"></i>Reset Penjualan
+          </button>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-yellow-600 text-white py-6 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+        © 2025 RisolKu. Dibuat Oleh Fadhilwandira.
+      </div>
+    </footer>
+    <script>
+      // Mobile menu toggle
+      const menuBtn = document.getElementById("menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      menuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+
+      // LocalStorage keys
+      const LS_PRODUK = "risolku_produk";
+      const LS_PENJUALAN = "risolku_penjualan";
+      const LS_MODAL = "risolku_modal";
+
+      // Data storage
+      let produkData = [];
+      let penjualanData = [];
+      let modalData = {};
+
+      // Elements
+      const produkTbody = document.getElementById("produk-tbody");
+      const penjualanTbody = document.getElementById("penjualan-tbody");
+      const totalProdukEl = document.getElementById("total-produk");
+      const totalPenjualanEl = document.getElementById("total-penjualan");
+      const totalPendapatanEl = document.getElementById("total-pendapatan");
+      const totalPelangganEl = document.getElementById("total-pelanggan");
+      const modalAwalHariEl = document.getElementById("modal-awal-hari");
+
+      const modalOverlay = document.getElementById("modal-overlay");
+      const modalForm = document.getElementById("modal-form");
+      const modalTanggalInput = document.getElementById("modal-tanggal");
+      const modalJumlahInput = document.getElementById("modal-jumlah");
+      const modalCancelBtn = document.getElementById("modal-cancel");
+
+      // Load data from localStorage
+      function loadData() {
+        const produkLS = localStorage.getItem(LS_PRODUK);
+        const penjualanLS = localStorage.getItem(LS_PENJUALAN);
+        const modalLS = localStorage.getItem(LS_MODAL);
+        produkData = produkLS ? JSON.parse(produkLS) : [];
+        penjualanData = penjualanLS ? JSON.parse(penjualanLS) : [];
+        modalData = modalLS ? JSON.parse(modalLS) : {};
+      }
+
+      // Save data to localStorage
+      function saveData() {
+        localStorage.setItem(LS_PRODUK, JSON.stringify(produkData));
+        localStorage.setItem(LS_PENJUALAN, JSON.stringify(penjualanData));
+        localStorage.setItem(LS_MODAL, JSON.stringify(modalData));
+      }
+
+      // Render functions
+      function renderProduk() {
+        produkTbody.innerHTML = "";
+        produkData.forEach((produk, index) => {
+          const tr = document.createElement("tr");
+          tr.className = "divide-y divide-gray-100 text-gray-700";
+          tr.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
+          <td class="px-6 py-4 whitespace-nowrap">${produk.nama}</td>
+          <td class="px-6 py-4 whitespace-nowrap">${produk.harga.toLocaleString(
+            "id-ID"
+          )}</td>
+          <td class="px-6 py-4 whitespace-nowrap">${produk.stok}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-center space-x-2">
+            <button aria-label="Edit ${
+              produk.nama
+            }" class="text-yellow-600 hover:text-yellow-800 btn-edit-produk" data-index="${index}">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button aria-label="Hapus ${
+              produk.nama
+            }" class="text-red-600 hover:text-red-800 btn-hapus-produk" data-index="${index}">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        `;
+          produkTbody.appendChild(tr);
+        });
+        totalProdukEl.textContent = produkData.length;
+      }
+
+      function renderPenjualan() {
+        penjualanTbody.innerHTML = "";
+        penjualanData.forEach((penjualan, index) => {
+          const tr = document.createElement("tr");
+          tr.className = "divide-y divide-gray-100 text-gray-700";
+          tr.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
+          <td class="px-6 py-4 whitespace-nowrap">${penjualan.produk}</td>
+          <td class="px-6 py-4 whitespace-nowrap">${penjualan.jumlah}</td>
+          <td class="px-6 py-4 whitespace-nowrap">${penjualan.tanggal}</td>
+        `;
+          penjualanTbody.appendChild(tr);
+        });
+        totalPenjualanEl.textContent = penjualanData.reduce(
+          (acc, cur) => acc + cur.jumlah,
+          0
+        );
+        const totalPendapatan = penjualanData.reduce(
+          (acc, cur) => acc + cur.harga * cur.jumlah,
+          0
+        );
+        totalPendapatanEl.textContent =
+          "Rp " + totalPendapatan.toLocaleString("id-ID");
+        // Jumlah data penjualan (jumlah item penjualan)
+        totalPelangganEl.textContent = penjualanData.length;
+      }
+
+      function renderModalAwal() {
+        const today = new Date().toISOString().slice(0, 10);
+        if (modalData[today] !== undefined) {
+          modalAwalHariEl.textContent =
+            "Rp " + Number(modalData[today]).toLocaleString("id-ID");
+        } else {
+          modalAwalHariEl.textContent = "Rp 0";
+        }
+      }
+
+      // Reset data function
+      function resetData() {
+        produkData = [];
+        penjualanData = [];
+        modalData = {};
+        saveData();
+        renderProduk();
+        renderPenjualan();
+        renderModalAwal();
+        updateDashboard();
+      }
+
+      // Initial load and render
+      loadData();
+      renderProduk();
+      renderPenjualan();
+      renderModalAwal();
+      updateDashboard();
+
+      // Button handlers
+      document
+        .getElementById("btn-tambah-produk")
+        .addEventListener("click", () => {
+          const nama = prompt("Masukkan nama produk:");
+          if (!nama) return alert("Nama produk wajib diisi.");
+          const hargaStr = prompt("Masukkan harga produk (angka):");
+          const harga = parseInt(hargaStr);
+          if (isNaN(harga) || harga <= 0)
+            return alert("Harga produk harus angka positif.");
+          const stokStr = prompt("Masukkan stok produk (angka):");
+          const stok = parseInt(stokStr);
+          if (isNaN(stok) || stok < 0)
+            return alert("Stok produk harus angka nol atau lebih.");
+          produkData.push({ nama, harga, stok });
+          saveData();
+          renderProduk();
+          updateDashboard();
+        });
+
+      document
+        .getElementById("btn-reset-produk")
+        .addEventListener("click", () => {
+          if (confirm("Apakah Anda yakin ingin mereset semua data produk?")) {
+            produkData = [];
+            saveData();
+            renderProduk();
+            updateDashboard();
+          }
+        });
+
+      document
+        .getElementById("btn-tambah-penjualan")
+        .addEventListener("click", () => {
+          if (produkData.length === 0)
+            return alert(
+              "Tidak ada produk tersedia. Tambah produk terlebih dahulu."
+            );
+          let produkOptions = produkData
+            .map((p, i) => `${i + 1}. ${p.nama}`)
+            .join("\n");
+          const produkIndexStr = prompt(`Pilih produk:\n${produkOptions}`);
+          const produkIndex = parseInt(produkIndexStr) - 1;
+          if (
+            isNaN(produkIndex) ||
+            produkIndex < 0 ||
+            produkIndex >= produkData.length
+          )
+            return alert("Pilihan produk tidak valid.");
+          const produk = produkData[produkIndex];
+          const jumlahStr = prompt(
+            `Masukkan jumlah penjualan untuk produk "${produk.nama}":`
+          );
+          const jumlah = parseInt(jumlahStr);
+          if (isNaN(jumlah) || jumlah <= 0)
+            return alert("Jumlah harus angka positif.");
+          if (jumlah > produk.stok)
+            return alert(`Stok tidak cukup. Stok tersedia: ${produk.stok}`);
+          // Ambil tanggal hari ini dalam format YYYY-MM-DD
+          const tanggal = new Date().toISOString().slice(0, 10);
+          // Kurangi stok produk
+          produk.stok -= jumlah;
+          penjualanData.push({
+            produk: produk.nama,
+            jumlah,
+            harga: produk.harga,
+            tanggal,
+          });
+          saveData();
+          renderProduk();
+          renderPenjualan();
+          updateDashboard();
+        });
+
+      document
+        .getElementById("btn-reset-penjualan")
+        .addEventListener("click", () => {
+          if (
+            confirm("Apakah Anda yakin ingin mereset semua data penjualan?")
+          ) {
+            penjualanData = [];
+            saveData();
+            renderPenjualan();
+            updateDashboard();
+          }
+        });
+
+      // Delegated event listeners for edit and delete produk
+      produkTbody.addEventListener("click", (e) => {
+        if (e.target.closest(".btn-edit-produk")) {
+          const index = parseInt(
+            e.target.closest(".btn-edit-produk").dataset.index
+          );
+          editProduk(index);
+        } else if (e.target.closest(".btn-hapus-produk")) {
+          const index = parseInt(
+            e.target.closest(".btn-hapus-produk").dataset.index
+          );
+          hapusProduk(index);
+        }
+      });
+
+      function editProduk(index) {
+        const produk = produkData[index];
+        const nama = prompt("Edit nama produk:", produk.nama);
+        if (!nama) return alert("Nama produk wajib diisi.");
+        const hargaStr = prompt("Edit harga produk (angka):", produk.harga);
+        const harga = parseInt(hargaStr);
+        if (isNaN(harga) || harga <= 0)
+          return alert("Harga produk harus angka positif.");
+        const stokStr = prompt("Edit stok produk (angka):", produk.stok);
+        const stok = parseInt(stokStr);
+        if (isNaN(stok) || stok < 0)
+          return alert("Stok produk harus angka nol atau lebih.");
+        produkData[index] = { nama, harga, stok };
+        saveData();
+        renderProduk();
+        updateDashboard();
+      }
+
+      function hapusProduk(index) {
+        if (confirm(`Hapus produk "${produkData[index].nama}"?`)) {
+          produkData.splice(index, 1);
+          saveData();
+          renderProduk();
+          updateDashboard();
+        }
+      }
+
+      // Update dashboard counts
+      function updateDashboard() {
+        totalProdukEl.textContent = produkData.length;
+        totalPenjualanEl.textContent = penjualanData.reduce(
+          (acc, cur) => acc + cur.jumlah,
+          0
+        );
+        const totalPendapatan = penjualanData.reduce(
+          (acc, cur) => acc + cur.harga * cur.jumlah,
+          0
+        );
+        totalPendapatanEl.textContent =
+          "Rp " + totalPendapatan.toLocaleString("id-ID");
+        // Jumlah data penjualan (jumlah item penjualan)
+        totalPelangganEl.textContent = penjualanData.length;
+        renderModalAwal();
+      }
+
+      // Modal functions
+      function openModal() {
+        modalOverlay.classList.remove("hidden");
+        // Set default date to today
+        modalTanggalInput.value = new Date().toISOString().slice(0, 10);
+        // If modal for today exists, fill jumlah
+        const today = modalTanggalInput.value;
+        modalJumlahInput.value =
+          modalData[today] !== undefined ? modalData[today] : "";
+        modalJumlahInput.focus();
+      }
+
+      function closeModal() {
+        modalOverlay.classList.add("hidden");
+      }
+
+      modalCancelBtn.addEventListener("click", () => {
+        closeModal();
+      });
+
+      modalForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const tanggal = modalTanggalInput.value;
+        let jumlah = modalJumlahInput.value.trim();
+        if (!tanggal) {
+          alert("Tanggal wajib diisi.");
+          return;
+        }
+        if (!jumlah || isNaN(jumlah) || Number(jumlah) < 0) {
+          alert("Jumlah modal awal harus angka nol atau lebih.");
+          return;
+        }
+        jumlah = Number(jumlah);
+        modalData[tanggal] = jumlah;
+        saveData();
+        renderModalAwal();
+        closeModal();
+      });
+
+      // Show modal once per day
+      function checkShowModal() {
+        const today = new Date().toISOString().slice(0, 10);
+        const lastShown = localStorage.getItem("risolku_modal_last_shown");
+        if (lastShown !== today) {
+          openModal();
+          localStorage.setItem("risolku_modal_last_shown", today);
+        } else {
+          renderModalAwal();
+        }
+      }
+
+      // Run on page load
+      checkShowModal();
+    </script>
+  </body>
+</html>
